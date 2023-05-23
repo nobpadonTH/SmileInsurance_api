@@ -14,6 +14,7 @@ namespace SmilesInsurance_api
             CreateMap<InsertAMLOListRequestDto, AMLOList>();
             CreateMap<AMLOLetter, GetAMLOLetterByIdResponseDto>();
             CreateMap<AMLOList, GetAMLOListByIdResponseDto>();
+            CreateMap<AMLOLetter, GetAMLOLetterListResponseDto>();
         }
     }
 }

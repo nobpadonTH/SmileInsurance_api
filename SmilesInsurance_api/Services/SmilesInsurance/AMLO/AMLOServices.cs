@@ -291,5 +291,25 @@ namespace SmilesInsurance_api.Services.SmilesInsurance.AMLO
                 return ResponseResult.Failure<InsertAMLOListResponseDto>(ex.Message);
             }
         }
+
+        public async Task<ServiceResponse<List<GetAMLOLetterListResponseDto>>> GetAMLOLetter(GetAMLOLetterListRequestDto filter)
+        {
+            try
+            {
+                var data = _dBContext.AMLOLetter.Where(x => x.IsActive.Equals(true)).OrderByDescending(x => x.CreatedDate).AsQueryable();
+                if (!string.IsNullOrEmpty(filter.AMLOLetterName))
+                {
+                    data = data.Where(x => x.AMLOLetterName.Equals(filter.AMLOLetterName));
+                }
+
+                var dataOut = _mapper.Map<List<GetAMLOLetterListResponseDto>>(await data.ToListAsync());
+
+                return ResponseResult.Success<List<GetAMLOLetterListResponseDto>>(dataOut);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
     }
 }
