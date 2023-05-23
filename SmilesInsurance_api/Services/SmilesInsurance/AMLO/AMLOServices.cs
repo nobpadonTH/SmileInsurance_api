@@ -292,23 +292,27 @@ namespace SmilesInsurance_api.Services.SmilesInsurance.AMLO
             }
         }
 
-        public async Task<ServiceResponse<List<GetAMLOLetterListResponseDto>>> GetAMLOLetter(GetAMLOLetterListRequestDto filter)
+        public async Task<ServiceResponse<List<GetAMLOLetterListResponseDto>>> GetAMLOLetterList(GetAMLOLetterListRequestDto filter)
         {
             try
             {
+                Log.Information("[GetAMLOLetterList] - start Param:{@param} Date: {@Date}", filter, DateTime.Now);
                 var data = _dBContext.AMLOLetter.Where(x => x.IsActive.Equals(true)).OrderByDescending(x => x.CreatedDate).AsQueryable();
                 if (!string.IsNullOrEmpty(filter.AMLOLetterName))
                 {
                     data = data.Where(x => x.AMLOLetterName.Equals(filter.AMLOLetterName));
                 }
 
+                Log.Information("[GetAMLOLetterList] - Mapper data Response");
                 var dataOut = _mapper.Map<List<GetAMLOLetterListResponseDto>>(await data.ToListAsync());
 
+                Log.Information("[GetAMLOLetterList] - Done! {date}", DateTime.Now);
                 return ResponseResult.Success<List<GetAMLOLetterListResponseDto>>(dataOut);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                throw;
+                Log.Error(ex.Message, "[GetAMLOLetterList] - An error occurred");
+                return ResponseResult.Failure<List<GetAMLOLetterListResponseDto>>(ex.Message);
             }
         }
     }

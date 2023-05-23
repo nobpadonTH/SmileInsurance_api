@@ -16,7 +16,7 @@ namespace SmilesInsurance_api.Services.SmilesInsurance.AMLO
 
         Task<ServiceResponse<GetAMLOLetterByIdResponseDto>> GetAMLOLetter(Guid AMLOLetterId);
 
-        Task<ServiceResponse<List<GetAMLOLetterListResponseDto>>> GetAMLOLetter(GetAMLOLetterListRequestDto filter);
+        Task<ServiceResponse<List<GetAMLOLetterListResponseDto>>> GetAMLOLetterList(GetAMLOLetterListRequestDto filter);
 
         Task<ServiceResponse<InsertAMLOLetterResponseDto>> InsertAMLOLetter(InsertAMLOLetterRequestDto input);
 

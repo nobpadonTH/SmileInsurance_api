@@ -37,9 +37,9 @@ namespace SmilesInsurance_api.Controllers.SmilesInsurance
         /// <param name="param"></param>
         /// <returns></returns>
         [HttpGet("letterlist")]
-        public async Task<IActionResult> InsertAMLOLetter([FromQuery] GetAMLOLetterListRequestDto param)
+        public async Task<IActionResult> GetAMLOLetterList([FromQuery] GetAMLOLetterListRequestDto param)
         {
-            var data = await _services.GetAMLOLetter(param);
+            var data = await _services.GetAMLOLetterList(param);
             return Ok(data);
         }
 
