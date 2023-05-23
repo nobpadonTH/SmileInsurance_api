@@ -68,6 +68,14 @@ namespace SmilesInsurance_api.Services.SmilesInsurance.AMLO
 
                 //Pagination
                 var paginationResult = await _httpcontext.HttpContext.InsertPaginationParametersInResponse(data, filter.RecordsPerPage, filter.Page);
+
+                //fixbug เมื่อค้นหารายการ แล้วเลื่อนไปยังหน้าถัดไป ระบบแสดงหน้าถัดไป แต่เมื่อเปลี่ยนวันที่ และค้นหาใหม่ ถ้ามีข้อมูลน้อยเกินจะอยู่ในหน้าปัจจุบัน ระบบไม่แสดงข้อมูล
+                if (paginationResult.TotalAmountPages <= filter.Page)
+                {
+                    filter.Page = (int)paginationResult.TotalAmountPages;
+                    paginationResult.CurrentPage = (int)paginationResult.TotalAmountPages;
+                    paginationResult.PageIndex = (int)paginationResult.TotalAmountPages - 1;
+                }
                 var dto = await data.Paginate(filter).ToListAsync();
 
                 //mapping dto response
@@ -182,7 +190,8 @@ namespace SmilesInsurance_api.Services.SmilesInsurance.AMLO
 
                 Log.Information("[GetAMLOListPagination] - Param {@filter}", filter);
                 var data = _dBContext.AMLOList.Where(x => x.IsActive.Equals(true)).AsQueryable();
-                if (filter.AMLOLetterId.HasValue)
+
+                if (filter.AMLOLetterId != null)
                 {
                     data = data.Where(x => x.AMLOLetter.Equals(filter.AMLOLetterId));
                 }
@@ -192,8 +201,31 @@ namespace SmilesInsurance_api.Services.SmilesInsurance.AMLO
                     data = data.Where(x => x.IdCardNo.Equals(filter.SearchText) || x.FirstName.Contains(filter.SearchText) || x.LastName.Contains(filter.SearchText));
                 }
 
+                //Ordering
+                if (!string.IsNullOrWhiteSpace(filter.OrderingField))
+                {
+                    try
+                    {
+                        data = data.OrderBy($"{filter.OrderingField} {(filter.AscendingOrder ? "ascending" : "descending")}");
+                    }
+                    catch (Exception e)
+                    {
+                        Log.Error(e.Message, "[GetAMLOListPagination] - An error occurred.");
+                        return ResponseResultWithPagination.Failure<List<GetAMLOListResponseDto>>($"Could not order by field: {filter.OrderingField}");
+                    }
+                }
+
                 //Pagination
                 var paginationResult = await _httpcontext.HttpContext.InsertPaginationParametersInResponse(data, filter.RecordsPerPage, filter.Page);
+
+                //fixbug เมื่อค้นหารายการ แล้วเลื่อนไปยังหน้าถัดไป ระบบแสดงหน้าถัดไป แต่เมื่อเปลี่ยนวันที่ และค้นหาใหม่ ถ้ามีข้อมูลน้อยเกินจะอยู่ในหน้าปัจจุบัน ระบบไม่แสดงข้อมูล
+                if (paginationResult.TotalAmountPages <= filter.Page)
+                {
+                    filter.Page = (int)paginationResult.TotalAmountPages;
+                    paginationResult.CurrentPage = (int)paginationResult.TotalAmountPages;
+                    paginationResult.PageIndex = (int)paginationResult.TotalAmountPages - 1;
+                }
+
                 var dto = await data.Paginate(filter).ToListAsync();
 
                 //mapping dto response
