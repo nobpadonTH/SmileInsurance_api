@@ -193,7 +193,7 @@ namespace SmilesInsurance_api.Services.SmilesInsurance.AMLO
 
                 if (filter.AMLOLetterId != null)
                 {
-                    data = data.Where(x => x.AMLOLetter.Equals(filter.AMLOLetterId));
+                    data = data.Where(x => x.AMLOLetter.AMLOLetterId.Equals(filter.AMLOLetterId));
                 }
 
                 if (!string.IsNullOrEmpty(filter.SearchText))
